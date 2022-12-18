@@ -1,10 +1,10 @@
 package com.example.balanceservice.dto;
 
-public class AccountDTO {
+public class AccountTO {
     private Long id;
     private Long amount;
 
-    public AccountDTO() {
+    public AccountTO() {
     }
 
     public Long getId() {
@@ -21,5 +21,13 @@ public class AccountDTO {
 
     public void setAmount(Long amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return "AccountTO{" +
+                "id=" + id +
+                ", amount=" + amount +
+                '}';
     }
 }

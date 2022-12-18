@@ -28,7 +28,7 @@ public class BalanceServiceAspect {
 
     @AfterReturning("execution(public void com.example.balanceservice.service.impl.BalanceServiceImpl.changeBalance(..))")
     public void afterReturningChangeBalance() {
-        countCallMethodChangeBalance++;
+        countCallMethodChangeBalance++; // вызывается метод с другого класса
         countCallMethodInTime();
     }
 
@@ -48,7 +48,7 @@ public class BalanceServiceAspect {
                 sumCallMethod + " call in 1 sec");
     }
 
-    private void startTimer() {
+    private void startTimer() { // RateStatisticsLoggerJob
         Timer myTimer = new Timer();
 
         myTimer.scheduleAtFixedRate(new TimerTask() {

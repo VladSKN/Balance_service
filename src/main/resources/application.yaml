@@ -1,9 +1,11 @@
+swagger-api:
+  version: "1.0"
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
-  profiles:
-    active: dev
+#  profiles:
+#    active: dev
 server:
   port: 8091
