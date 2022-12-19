@@ -7,14 +7,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-// TODO Возможно тут нужен DAO?
-// TODO предусмотреть кэш
-// TODO синхронизация в Service?
 
 @Service
 public class BalanceServiceImpl implements BalanceService {
+
+    private final Map<Long, ReentrantReadWriteLock> accountIdToLock = new HashMap<>();
 
     private final BalanceCache balanceCache;
 
@@ -26,13 +28,27 @@ public class BalanceServiceImpl implements BalanceService {
 
     @Override
     public Optional<Long> getBalance(Long id) {
-        log.info("");
-        return balanceCache.getBalance(id);
+        Optional<Long> getBalance;
+        accountIdToLock.putIfAbsent(id, new ReentrantReadWriteLock());
+        try {
+            accountIdToLock.get(id).readLock().lock();
+            getBalance = balanceCache.getBalance(id);
+            log.info("");
+        } finally {
+            accountIdToLock.get(id).readLock().unlock();
+        }
+        return getBalance;
     }
 
     @Override
     public void changeBalance(Long id, Long amount) throws NotEnoughFundsException {
+        accountIdToLock.putIfAbsent(id, new ReentrantReadWriteLock());
+        try {
+            accountIdToLock.get(id).writeLock().lock();
+            balanceCache.changeBalance(id, amount);
+        } finally {
+            accountIdToLock.get(id).writeLock().unlock();
+        }
         log.info("");
-        balanceCache.changeBalance(id, amount);
     }
 }

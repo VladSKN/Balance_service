@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 @Component
 public class BalanceCache {
-    private final Map<Long, ReentrantReadWriteLock> accountIdToLock = new HashMap<>();
+
+    private final Map<Long, Optional<Long>> balanceCache = new HashMap<>();
 
     private static final Logger log = LoggerFactory.getLogger(BalanceCache.class);
 
@@ -25,25 +25,21 @@ public class BalanceCache {
     }
 
     public Optional<Long> getBalance(Long id) {
-        accountIdToLock.putIfAbsent(id, new ReentrantReadWriteLock());
-        Optional<Long> getBalance;
-        try {
-            accountIdToLock.get(id).readLock().lock();
-            getBalance = balanceDAO.getBalance(id);
+        Optional<Long> cached = balanceCache.get(id);
+        if (cached == null) { // почему cached возвращает null если это Optional???
+            Optional<Long> balance = balanceDAO.getBalance(id);
+            balanceCache.put(id, balance);
             log.info("");
-        } finally {
-            accountIdToLock.get(id).readLock().unlock();
+            return balance;
+        } else {
+            log.info("");
+            return cached;
         }
-        return getBalance;
     }
 
     public void changeBalance(Long id, Long amount) throws NotEnoughFundsException {
-        accountIdToLock.putIfAbsent(id, new ReentrantReadWriteLock());
-        try {
-            accountIdToLock.get(id).writeLock().lock();
-            balanceDAO.changeBalance(id, amount);
-        } finally {
-            accountIdToLock.get(id).writeLock().unlock();
-        }
+        balanceDAO.changeBalance(id, amount);
+        balanceCache.computeIfPresent(id, (key, value) -> balanceDAO.getBalance(id));
+        log.info("");
     }
 }
