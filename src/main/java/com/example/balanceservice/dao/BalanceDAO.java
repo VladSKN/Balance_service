@@ -57,7 +57,7 @@ public class BalanceDAO {
             jdbcTemplate.update(CHANGE_BALANCE_SQL, account.getAmount(), account.getId());
             log.info("changeBalanceById by BalanceServiceImpl id = {}, amount = {} change amount = {}"
                     , account.getId(), amount, account.getAmount());
-        }  catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             log.error(errorIdNotFound);
             throw new NotEnoughFundsException(errorIdNotFound);
         }

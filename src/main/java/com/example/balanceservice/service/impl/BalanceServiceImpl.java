@@ -33,7 +33,7 @@ public class BalanceServiceImpl implements BalanceService {
         try {
             accountIdToLock.get(id).readLock().lock();
             getBalance = balanceCache.getBalance(id);
-            log.info("");
+            log.info("getBalance by BalanceServiceImpl successfully");
         } finally {
             accountIdToLock.get(id).readLock().unlock();
         }
@@ -49,6 +49,6 @@ public class BalanceServiceImpl implements BalanceService {
         } finally {
             accountIdToLock.get(id).writeLock().unlock();
         }
-        log.info("");
+        log.info("changeBalance by BalanceServiceImpl successfully");
     }
 }

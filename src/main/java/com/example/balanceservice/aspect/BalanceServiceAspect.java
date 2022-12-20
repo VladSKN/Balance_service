@@ -1,62 +1,32 @@
 package com.example.balanceservice.aspect;
 
 
+import com.example.balanceservice.log.RateStatisticsLoggerJob;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 @Aspect
 @Component
 public class BalanceServiceAspect {
 
-    private final Logger logger = LoggerFactory.getLogger(BalanceServiceAspect.class);
+    private final RateStatisticsLoggerJob loggerJob;
 
-    private long countCallMethodChangeBalance = 0L; //TODO нужна ли тут многопоточка?
 
-    private long countCallMethodGetBalance = 0L;
-
-    private long sumCallMethod;
-
-    {
-        startTimer();
+    public BalanceServiceAspect(RateStatisticsLoggerJob loggerJob) {
+        this.loggerJob = loggerJob;
     }
 
-    @AfterReturning("execution(public void com.example.balanceservice.service.impl.BalanceServiceImpl.changeBalance(..))")
+
+    @AfterReturning(
+            "execution(public void com.example.balanceservice.service.impl.BalanceServiceImpl.changeBalance(..))")
     public void afterReturningChangeBalance() {
-        countCallMethodChangeBalance++; // вызывается метод с другого класса
-        countCallMethodInTime();
+        loggerJob.getLastSecondStatisticsChangeBalance();
     }
 
 
     @AfterReturning("execution(* com.example.balanceservice.service.impl.BalanceServiceImpl.getBalance(*))")
     public void afterReturningGetBalance() {
-        countCallMethodGetBalance++;
-        countCallMethodInTime();
-    }
-
-
-    private void countCallMethodInTime() {
-        logger.info("\n" + "afterReturningGetBalance = "
-                + countCallMethodGetBalance + " call \n" +
-                "countCallMethodChangeBalance = "
-                + countCallMethodChangeBalance + " call \n" + "sum = " +
-                sumCallMethod + " call in 1 sec");
-    }
-
-    private void startTimer() { // RateStatisticsLoggerJob
-        Timer myTimer = new Timer();
-
-        myTimer.scheduleAtFixedRate(new TimerTask() {
-            public void run() {
-                sumCallMethod = countCallMethodChangeBalance + countCallMethodGetBalance;
-                countCallMethodChangeBalance = 0;
-                countCallMethodGetBalance = 0;
-            }
-        }, 0, 1000); // каждые 1 секунд
+        loggerJob.getLastSecondStatisticsGetBalance();
     }
 }

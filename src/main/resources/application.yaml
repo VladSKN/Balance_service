@@ -9,3 +9,5 @@ spring:
 #    active: dev
 server:
   port: 8091
+  servlet:
+    context-path: /app
