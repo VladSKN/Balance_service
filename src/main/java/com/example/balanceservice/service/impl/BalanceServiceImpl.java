@@ -45,7 +45,9 @@ public class BalanceServiceImpl implements BalanceService {
         accountIdToLock.putIfAbsent(id, new ReentrantReadWriteLock());
         try {
             accountIdToLock.get(id).writeLock().lock();
-            balanceCache.changeBalance(id, amount);
+            if (amount > 0) {
+                balanceCache.changeBalance(id, amount);
+            }
         } finally {
             accountIdToLock.get(id).writeLock().unlock();
         }

@@ -45,7 +45,6 @@ public class AccountController {
         long startTime = System.currentTimeMillis();
         balanceService.changeBalance(account.getId(), account.getAmount());
         long endTime = System.currentTimeMillis();
-
         log.info("changeBalanceById by AccountController successfully, accountId = {}, balance = {}, time elapsed {} ms",
                 account.getId(), account.getAmount(), (endTime - startTime));
         return String.format("changeBalance successfully accountId = %d", account.getId());

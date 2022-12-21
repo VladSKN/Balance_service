@@ -5,9 +5,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: postgres
-#  profiles:
-#    active: dev
 server:
   port: 8091
   servlet:
-    context-path: /app
+    context-path: /v1/
