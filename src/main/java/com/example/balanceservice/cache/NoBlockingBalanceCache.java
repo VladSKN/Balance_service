@@ -1,8 +1,7 @@
 package com.example.balanceservice.cache;
 
 
-import com.example.balanceservice.dao.BalanceDAO;
-import com.example.balanceservice.exception.NotEnoughFundsException;
+import com.example.balanceservice.dao.impl.BalanceDAOPostgresImpl;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -15,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Component
-public class BalanceCache {
+public class NoBlockingBalanceCache {
 
     private final CacheLoader<Long, Optional<Long>> loader = new CacheLoader<>() {
         @Override
@@ -29,11 +28,11 @@ public class BalanceCache {
             .expireAfterAccess(30, TimeUnit.MINUTES)
             .build(loader);
 
-    private static final Logger log = LoggerFactory.getLogger(BalanceCache.class);
+    private static final Logger log = LoggerFactory.getLogger(NoBlockingBalanceCache.class);
 
-    private final BalanceDAO balanceDAO;
+    private final BalanceDAOPostgresImpl balanceDAO;
 
-    public BalanceCache(BalanceDAO balanceDAO) {
+    public NoBlockingBalanceCache(BalanceDAOPostgresImpl balanceDAO) {
         this.balanceDAO = balanceDAO;
     }
 
@@ -43,7 +42,7 @@ public class BalanceCache {
         return cached;
     }
 
-    public void changeBalance(Long id, Long amount) throws NotEnoughFundsException {
+    public void changeBalance(Long id, Long amount) {
         balanceDAO.changeBalance(id, amount);
         cache.refresh(id);
         log.info("changeBalance by BalanceCache successfully");

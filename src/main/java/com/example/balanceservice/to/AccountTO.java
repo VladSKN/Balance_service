@@ -1,4 +1,4 @@
-package com.example.balanceservice.dto;
+package com.example.balanceservice.to;
 
 public class AccountTO {
     private Long id;

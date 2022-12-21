@@ -1,7 +1,7 @@
 package com.example.balanceservice.aspect;
 
 
-import com.example.balanceservice.log.RateStatisticsLoggerJob;
+import com.example.balanceservice.statistics.RateStatisticsLoggerJob;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;

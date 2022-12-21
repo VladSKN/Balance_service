@@ -1,9 +1,13 @@
 package com.example.balanceservice.controller;
 
 
-import com.example.balanceservice.dto.AccountTO;
+import com.example.balanceservice.exception.IdNotFoundException;
+import com.example.balanceservice.to.AccountTO;
 import com.example.balanceservice.exception.NotEnoughFundsException;
 import com.example.balanceservice.service.BalanceService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
+@Tag(name = "AccountController", description = "account balance")
 @RequestMapping(value = "/account",
         produces = MediaType.APPLICATION_JSON_VALUE)
 public class AccountController {
@@ -27,7 +32,9 @@ public class AccountController {
     }
 
     @GetMapping(value = "/getBalance/{accountId}")
-    public Optional<Long> getBalanceById(@PathVariable Long accountId) throws NotEnoughFundsException {
+    @Operation(summary = "getBalanceById")
+    public Optional<Long> getBalanceById(@Parameter(description = "accountId") @PathVariable Long accountId)
+            throws NotEnoughFundsException, IdNotFoundException {
         log.info("getAccountById by AccountController start method");
         long startTime = System.currentTimeMillis();
         Optional<Long> balance = balanceService.getBalance(accountId);
@@ -40,7 +47,9 @@ public class AccountController {
     }
 
     @PostMapping(value = "/changeBalance/")
-    public String changeBalanceById(@RequestBody AccountTO account) throws NotEnoughFundsException {
+    @Operation(summary = "changeBalanceById")
+    public String changeBalanceById(@Parameter(description = "account") @RequestBody AccountTO account)
+            throws NotEnoughFundsException, IdNotFoundException {
         log.info("changeBalanceById by AccountController start method");
         long startTime = System.currentTimeMillis();
         balanceService.changeBalance(account.getId(), account.getAmount());
@@ -52,8 +61,15 @@ public class AccountController {
 
     @ExceptionHandler(NotEnoughFundsException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleNoSuchElementFoundException(
-            NotEnoughFundsException exception) {
+    public ResponseEntity<String> handleNoSuchElementFoundException(NotEnoughFundsException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(IdNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleIdNotFoundException(IdNotFoundException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());

@@ -38,7 +38,7 @@
         <appender-ref ref="Console" />
     </root>
 
-    <logger name="com.example.balanceservice.log.RateStatisticsLoggerJob" level="info" additivity="false">
+    <logger name="com.example.balanceservice.statistics.RateStatisticsLoggerJob" level="info" additivity="false">
         <appender-ref ref="RollingFile" />
     </logger>
 

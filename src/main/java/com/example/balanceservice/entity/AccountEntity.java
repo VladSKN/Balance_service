@@ -2,18 +2,16 @@ package com.example.balanceservice.entity;
 
 
 public class AccountEntity {
-    private Long id;
+    private final Long id;
     private Long amount;
 
-    public AccountEntity() {
+    public AccountEntity(Long id, Long amount) {
+        this.id = id;
+        this.amount = amount;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Long getAmount() {
@@ -22,5 +20,13 @@ public class AccountEntity {
 
     public void setAmount(Long amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return "AccountEntity{" +
+                "id=" + id +
+                ", amount=" + amount +
+                '}';
     }
 }
