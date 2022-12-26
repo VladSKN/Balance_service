@@ -1,0 +1,12 @@
+2022-12-22 09:26:59,304 INFO c.e.b.s.RateStatisticsLoggerJob [http-nio-8091-exec-1] 
+afterReturningGetBalance = 1 call 
+countCallMethodChangeBalance = 0 call 
+sum = 0 call in 1 sec
+2022-12-22 09:27:03,505 INFO c.e.b.s.RateStatisticsLoggerJob [http-nio-8091-exec-3] 
+afterReturningGetBalance = 0 call 
+countCallMethodChangeBalance = 1 call 
+sum = 0 call in 1 sec
+2022-12-22 09:27:06,184 INFO c.e.b.s.RateStatisticsLoggerJob [http-nio-8091-exec-4] 
+afterReturningGetBalance = 1 call 
+countCallMethodChangeBalance = 0 call 
+sum = 0 call in 1 sec
