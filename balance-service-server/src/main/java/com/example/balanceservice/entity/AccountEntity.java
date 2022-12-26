@@ -3,7 +3,7 @@ package com.example.balanceservice.entity;
 
 public class AccountEntity {
     private final Long id;
-    private Long amount;
+    private final Long amount;
 
     public AccountEntity(Long id, Long amount) {
         this.id = id;
@@ -16,10 +16,6 @@ public class AccountEntity {
 
     public Long getAmount() {
         return amount;
-    }
-
-    public void setAmount(Long amount) {
-        this.amount = amount;
     }
 
     @Override
