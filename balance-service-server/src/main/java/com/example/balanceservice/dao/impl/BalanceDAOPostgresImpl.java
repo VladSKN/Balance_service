@@ -24,7 +24,6 @@ public class BalanceDAOPostgresImpl implements BalanceDAO {
     private static final AccountRowMapper accountRowMapper = new AccountRowMapper();
 
     public BalanceDAOPostgresImpl(JdbcTemplate jdbcTemplate) {
-
         this.jdbcTemplate = jdbcTemplate;
     }
 

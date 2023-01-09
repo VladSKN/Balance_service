@@ -15,6 +15,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+/**
+ * Тестирование функционала {@link com.example.balanceservice.service.impl.BalanceServiceImpl}.
+ */
 @ExtendWith(MockitoExtension.class)
 class BalanceServiceImplTest {
 
