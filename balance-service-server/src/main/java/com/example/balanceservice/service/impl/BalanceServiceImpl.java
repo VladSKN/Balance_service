@@ -65,7 +65,7 @@ public class BalanceServiceImpl implements BalanceService {
             cacheAccountIdToLock.getUnchecked(id).writeLock().lock();
             Optional<Long> balance = balanceCache.getBalance(id);
             if (balance.isEmpty()) {
-                throw new IdNotFoundException("Account with id " + id + " does not have enough founds");
+                throw new IdNotFoundException("Account with id " + id + " not found");
             } else {
                 if (balance.get() + amount >= 0) {
                     balanceCache.changeBalance(id, amount);

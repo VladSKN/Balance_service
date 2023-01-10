@@ -21,7 +21,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @ActiveProfiles("test")
 class AccountControllerTest {
 
-    private final static String BASE_PATH = "http://localhost:8091/v1/account";
+    private final static String BASE_PATH_GET_BALANCE = "http://localhost:8091/v1/account/getBalance/";
+
+    private final static String BASE_PATH_CHANGE_BALANCE = "http://localhost:8091/v1/account/changeBalance/";
+
+    private final static int UNKNOWN_ID = 4;
 
     private final static AccountEntity account = new AccountEntity(1L, 1L);
 
@@ -30,7 +34,7 @@ class AccountControllerTest {
     void getBalanceById_whenGetBalance_thenStatus200() {
         RestAssured.
                 when()
-                .get(BASE_PATH + "/getBalance/" + account.getId())
+                .get(BASE_PATH_GET_BALANCE + account.getId())
                 .then()
                 .log().all()
                 .assertThat()
@@ -45,7 +49,7 @@ class AccountControllerTest {
         String responseString =
                 RestAssured.
                         when()
-                        .get(BASE_PATH + "/getBalance/4")
+                        .get(BASE_PATH_GET_BALANCE + UNKNOWN_ID)
                         .then()
                         .log().all()
                         .assertThat()
@@ -64,7 +68,7 @@ class AccountControllerTest {
         RequestSpecification request = RestAssured.given().log().all();
         request.header("Content-Type", "application/json");
         request.body(requestBody.toJSONString());
-        Response response = request.post(BASE_PATH + "/changeBalance/");
+        Response response = request.post(BASE_PATH_CHANGE_BALANCE);
         int statusCode = response.getStatusCode();
         Assertions.assertEquals(200, statusCode);
     }
@@ -73,14 +77,17 @@ class AccountControllerTest {
     @DisplayName("Тестирование контроллера изменение баланса, не существующий пользователь, должен быть статус 400")
     void changeBalanceById_whenChangeBalance_thenStatus400() {
         JSONObject requestBody = new JSONObject();
-        requestBody.put("id", 4);
+        requestBody.put("id", UNKNOWN_ID);
         requestBody.put("amount", 1);
-        RequestSpecification request = RestAssured.given().log().all();
-        request.header("Content-Type", "application/json");
-        request.body(requestBody.toJSONString());
-        Response response = request.post(BASE_PATH + "/changeBalance/");
-        int statusCode = response.getStatusCode();
-        Assertions.assertEquals(400, statusCode);
+        RestAssured
+                .given()
+                .header("Content-Type", "application/json")
+                .body(requestBody.toJSONString())
+                .when()
+                .post(BASE_PATH_CHANGE_BALANCE)
+                .then().log().all()
+                .assertThat()
+                .statusCode(400).toString();
     }
 
     @Test
@@ -89,11 +96,14 @@ class AccountControllerTest {
         JSONObject requestBody = new JSONObject();
         requestBody.put("id", account.getId());
         requestBody.put("amount", -20000);
-        RequestSpecification request = RestAssured.given().log().all();
-        request.header("Content-Type", "application/json");
-        request.body(requestBody.toJSONString());
-        Response response = request.post(BASE_PATH + "/changeBalance/");
-        int statusCode = response.getStatusCode();
-        Assertions.assertEquals(400, statusCode);
+        RestAssured
+                .given()
+                .header("Content-Type", "application/json")
+                .body(requestBody.toJSONString())
+                .when()
+                .post(BASE_PATH_CHANGE_BALANCE)
+                .then().log().all()
+                .assertThat()
+                .statusCode(400);
     }
 }
