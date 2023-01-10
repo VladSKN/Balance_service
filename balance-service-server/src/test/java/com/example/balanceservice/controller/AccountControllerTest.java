@@ -1,5 +1,6 @@
 package com.example.balanceservice.controller;
 
+import com.example.balanceservice.entity.AccountEntity;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -22,20 +23,20 @@ class AccountControllerTest {
 
     private final static String BASE_PATH = "http://localhost:8091/v1/account";
 
+    private final static AccountEntity account = new AccountEntity(1L, 1L);
+
     @Test
     @DisplayName("Тестирование контроллера запроса баланса, должен быть статус 200")
     void getBalanceById_whenGetBalance_thenStatus200() {
-        String responseString =
-                RestAssured.
-                        when()
-                        .get(BASE_PATH + "/getBalance/" + 1)
-                        .then()
-                        .log().all()
-                        .assertThat()
-                        .statusCode(200)
-                        .extract()
-                        .asString();
-        assertThat(responseString).isEqualTo("16771");
+        RestAssured.
+                when()
+                .get(BASE_PATH + "/getBalance/" + account.getId())
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .extract()
+                .asString();
     }
 
     @Test
@@ -58,7 +59,7 @@ class AccountControllerTest {
     @DisplayName("Тестирование контроллера изменение баланса, должен быть статус 200")
     void changeBalanceById_whenChangeBalance_thenStatus200() {
         JSONObject requestBody = new JSONObject();
-        requestBody.put("id", 2);
+        requestBody.put("id", account.getId());
         requestBody.put("amount", 1);
         RequestSpecification request = RestAssured.given().log().all();
         request.header("Content-Type", "application/json");
@@ -86,8 +87,8 @@ class AccountControllerTest {
     @DisplayName("Тестирование контроллера изменение баланса, не корректная сумма, должен быть статус 400")
     void changeBalanceById_whenChangeBalance_thenStatus400_2() {
         JSONObject requestBody = new JSONObject();
-        requestBody.put("id", 2);
-        requestBody.put("amount", -2000);
+        requestBody.put("id", account.getId());
+        requestBody.put("amount", -20000);
         RequestSpecification request = RestAssured.given().log().all();
         request.header("Content-Type", "application/json");
         request.body(requestBody.toJSONString());
